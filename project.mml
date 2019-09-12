@@ -736,8 +736,8 @@ Layer:
               ('track', 6)
               ) AS v (highway, prio)
               ON v.highway=l.highway
-          WHERE valid_since <= '{{ date.strftime('%Y-%m-%d') }}' AND valid_until >= '{{ date.strftime('%Y-%m-%d') }}' AND (p.highway = 'turning_circle'
-            OR p.highway = 'turning_loop')
+          WHERE p.highway = 'turning_circle'
+            OR p.highway = 'turning_loop'
           ORDER BY p.way, v.prio
         ) AS turning_circle_sql
     properties:
@@ -831,7 +831,7 @@ Layer:
               WHERE valid_since <= '{{ date.strftime('%Y-%m-%d') }}' AND valid_until >= '{{ date.strftime('%Y-%m-%d') }}' AND ((tunnel IS NULL OR NOT tunnel IN ('yes', 'building_passage'))
                 AND (covered IS NULL OR NOT covered = 'yes')
                 AND (bridge IS NULL OR NOT bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct'))
-                AND highway IS NOT NULL -- end of road select)
+                AND highway IS NOT NULL) -- end of road select
             UNION ALL
             SELECT
                 valid_since,
@@ -861,7 +861,7 @@ Layer:
               WHERE valid_since <= '{{ date.strftime('%Y-%m-%d') }}' AND valid_until >= '{{ date.strftime('%Y-%m-%d') }}' AND ((tunnel IS NULL OR NOT tunnel IN ('yes', 'building_passage'))
                 AND (covered IS NULL OR NOT covered = 'yes')
                 AND (bridge IS NULL OR NOT bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct'))
-                AND railway IS NOT NULL -- end of rail select)
+                AND railway IS NOT NULL) -- end of rail select
             ) AS features
           ORDER BY
             layernotnull,
@@ -1056,7 +1056,7 @@ Layer:
                 z_order
               FROM planet_osm_line
               WHERE valid_since <= '{{ date.strftime('%Y-%m-%d') }}' AND valid_until >= '{{ date.strftime('%Y-%m-%d') }}' AND (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
-                AND highway IS NOT NULL -- end of road select)
+                AND highway IS NOT NULL) -- end of road select
             UNION ALL
             SELECT
                 valid_since,
@@ -1083,7 +1083,7 @@ Layer:
                 z_order
               FROM planet_osm_line
               WHERE valid_since <= '{{ date.strftime('%Y-%m-%d') }}' AND valid_until >= '{{ date.strftime('%Y-%m-%d') }}' AND (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
-                AND railway IS NOT NULL -- end of rail select)
+                AND railway IS NOT NULL) -- end of rail select
             ) AS features
           ORDER BY
             layernotnull,
@@ -1801,8 +1801,8 @@ Layer:
                 osm_id,
                 highway,
                 array_length(refs,1) AS height,
-                (SELECT valid_since,
-                valid_until, MAX(char_length(ref)) FROM unnest(refs) AS u(ref)) AS width,
+                (SELECT
+                 MAX(char_length(ref)) FROM unnest(refs) AS u(ref)) AS width,
                 array_to_string(refs, E'\n') AS refs
               FROM (
                 SELECT
@@ -1907,8 +1907,8 @@ Layer:
                 way,
                 highway,
                 array_length(refs,1) AS height,
-                (SELECT valid_since,
-                valid_until, MAX(char_length(ref)) FROM unnest(refs) AS u(ref)) AS width,
+                (SELECT 
+                 MAX(char_length(ref)) FROM unnest(refs) AS u(ref)) AS width,
                 array_to_string(refs, E'\n') AS refs
               FROM (
                 SELECT
